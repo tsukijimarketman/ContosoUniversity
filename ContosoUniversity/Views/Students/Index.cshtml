@@ -1,21 +1,52 @@
-﻿@model IEnumerable<ContosoUniversity.Models.Student>
+﻿@* @model IEnumerable<ContosoUniversity.Models.Student>  *@
+@model PaginatedList<ContosoUniversity.Models.Student>
 
 @{
     ViewData["Title"] = "Index";
+    var currentSort = ViewData["CurrentSort"] as string;
+    var isDescending = currentSort == "name_desc" || currentSort == "date_desc";
+    var arrowIcon = isDescending ? "&#x25BC;" : "&#x25B2;"; // this is the arrow filter
 }
 
 <h1 class="mb-4">Students</h1>
 
-<p>
-    <a class="btn btn-success mb-3" asp-action="Create">Create New</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+   
+    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2 mb-2">
+        <div class="form-group mb-0">
+            <input type="text" name="SearchString" class="form-control" placeholder="Search by name..."
+                   value="@ViewData["CurrentFilter"]" />
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary"> Back to Full List</a>
+    </form>
+
+    <a class="btn btn-success mb-2" asp-action="Create">
+        <i class="bi bi-plus-circle me-1"></i> Create New
+    </a>
+</div>
 
 <table class="table table-bordered table-hover table-striped align-middle">
     <thead class="table-dark">
         <tr>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>@Html.DisplayNameFor(model => model.FirstMidName)</th>
-            <th>@Html.DisplayNameFor(model => model.EnrollmentDate)</th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.LastName) *@
+                Last Name
+                <a asp-action="Index" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["NameSortParm"]" class="ms-1 text-light text-decoration-none">
+                    <span>@Html.Raw(arrowIcon)</span>
+                </a>
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.FirstMidName) *@
+                First and Middle Name
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
+                Date Enrolled
+                <a asp-action="Index" asp-route-currentFilter="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["DateSortParm"]" class="ms-1 text-light text-decoration-none">
+                    <span>@Html.Raw(arrowIcon)</span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -34,3 +65,96 @@
     }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+
+       
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-pageNumber="1">
+                    &lt;&lt;
+                </a>
+            </li>
+        }
+
+        
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)">
+                    Previous
+                </a>
+            </li>
+        }
+
+        
+        @foreach (var pageNum in Model.GetPageNumbers())
+        {
+            @if (pageNum == Model.PageIndex)
+            {
+                <li class="page-item active">
+                    <span class="page-link">@pageNum</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       asp-route-pageNumber="@pageNum">
+                        @pageNum
+                    </a>
+                </li>
+            }
+        }
+
+        
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)">
+                    Next
+                </a>
+            </li>
+        }
+
+        
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-pageNumber="@Model.TotalPages">
+                    &gt;&gt;
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>
+
+
+<div class="text-center mt-2">
+    <small class="text-muted">
+        Page @Model.PageIndex of @Model.TotalPages
+        (@Model.TotalItems total students)
+    </small>
+</div>
