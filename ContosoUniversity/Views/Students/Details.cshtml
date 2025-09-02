@@ -1,36 +1,84 @@
 ﻿@model ContosoUniversity.Models.Student
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Details";
+    var fields = Model.Enrollments.FirstOrDefault();
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0 text-center">Student Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @* Student Information Here *@
+                <div class="col-md-6">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-end fw-bold">
+                            @Html.DisplayNameFor(model => model.LastName):
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.LastName)
+                        </dd>
 
-<div>
-    <h4>Student</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstMidName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstMidName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EnrollmentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EnrollmentDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                        <dt class="col-sm-4 text-end fw-bold">
+                            @Html.DisplayNameFor(model => model.FirstMidName):
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.FirstMidName)
+                        </dd>
+
+                        <dt class="col-sm-4 text-end fw-bold">
+                            @Html.DisplayNameFor(model => model.EnrollmentDate):
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.EnrollmentDate)
+                        </dd>
+
+                        
+                        <dt class="col-sm-4 text-end fw-bold">
+                            Student @Html.DisplayNameFor(model => model.ID) (LRN):
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.ID)
+                        </dd>                        
+                        
+                        <p>This is the Student Details of <strong> @Model.FirstMidName @Model.LastName </strong></p>
+                    </dl>
+                </div>
+
+                @* Enrollments Table here *@
+                <div class="col-md-6">
+                    <h5 class="fw-bold">@Html.DisplayNameFor(model => model.Enrollments)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Course Title</th>
+                                    <th>Grade</th>
+                                    <th>Credits</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Enrollments)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Course.Title)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Grade)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Course.Credits)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning me-2">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
 </div>
