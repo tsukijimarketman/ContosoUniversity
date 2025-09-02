@@ -2,20 +2,47 @@
 
 @{
     ViewData["Title"] = "Index";
+    var currentSort = ViewData["CurrentSort"] as string;
+    var isDescending = currentSort == "name_desc" || currentSort == "date_desc";
+    var arrowIcon = isDescending ? "&#x25BC;" : "&#x25B2;"; // this is the arrow filter
 }
 
 <h1 class="mb-4">Students</h1>
 
-<p>
-    <a class="btn btn-success mb-3" asp-action="Create">Create New</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+   
+    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2 mb-2">
+        <div class="form-group mb-0">
+            <input type="text" name="SearchString" class="form-control" placeholder="Search by name..."
+                   value="@ViewData["CurrentFilter"]" />
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary"> Back to Full List</a>
+    </form>
+
+    <a class="btn btn-success mb-2" asp-action="Create">
+        <i class="bi bi-plus-circle me-1"></i> Create New
+    </a>
+</div>
 
 <table class="table table-bordered table-hover table-striped align-middle">
     <thead class="table-dark">
         <tr>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>@Html.DisplayNameFor(model => model.FirstMidName)</th>
-            <th>@Html.DisplayNameFor(model => model.EnrollmentDate)</th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" class="ms-1 text-light text-decoration-none">
+                    <span>@Html.Raw(arrowIcon)</span>
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EnrollmentDate)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" class="ms-1 text-light text-decoration-none">
+                    <span>@Html.Raw(arrowIcon)</span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
     </thead>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace ContosoUniversity.Models
 {
@@ -10,6 +11,7 @@ namespace ContosoUniversity.Models
         public string FirstMidName { get; set; }
         public DateTime EnrollmentDate { get; set; }
 
+        [ValidateNever]
         public ICollection<Enrollment> Enrollments { get; set; }
     }
 }
