@@ -23,11 +23,26 @@ namespace ContosoUniversity.Controllers
         // GET: Students
         [Authorize]
         //sortOrder for the filters on the sorting, and searchString for the filters on the searchBar
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string searchString,
+            string currentFilter,
+            int? pageNumber
+        )
         {
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
             ViewData["CurrentFilter"] = searchString;
 
             var students = from s in _context.Students select s;
@@ -55,7 +70,16 @@ namespace ContosoUniversity.Controllers
                     break;
             }
 
-            return View(await students.AsNoTracking().ToListAsync());
+            int pageSize = 5;
+
+            //return View(await students.AsNoTracking().ToListAsync());
+            return View(
+                await PaginatedList<Student>.CreateAsync(
+                    students.AsNoTracking(),
+                    pageNumber ?? 1,
+                    pageSize
+                )
+            );
         }
 
         // GET: Students/Details/5
