@@ -2,6 +2,7 @@ using System.Diagnostics;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,7 @@ namespace ContosoUniversity.Controllers
             return View();
         }
 
+        [Authorize]
         public async Task<ActionResult> About()
         {
             IQueryable<EnrollmentDateGroup> data =
